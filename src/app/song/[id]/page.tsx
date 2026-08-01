@@ -191,7 +191,7 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
               {showCollections && (
                 <>
                   <div className="fixed inset-0 z-0" onClick={() => setShowCollections(false)} />
-                  <div className="absolute top-full mt-2 left-0 w-64 bg-[#0a0a0a] border border-[#262626] rounded-xl shadow-2xl overflow-hidden z-10 p-2 flex flex-col gap-1">
+                  <div className="absolute top-full mt-2 right-0 sm:left-0 sm:right-auto w-[240px] sm:w-64 bg-[#0a0a0a] border border-[#262626] rounded-xl shadow-2xl overflow-hidden z-10 p-2 flex flex-col gap-1">
                     {Object.values(collections).length === 0 ? (
                       <div className="p-3 text-sm text-neutral-500 text-center">No collections yet</div>
                     ) : (
