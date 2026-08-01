@@ -17,15 +17,14 @@ export default function NewCollectionPage() {
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
-    const toastConfig = { action: { label: 'OK', onClick: () => {} } };
 
     if (!name.trim()) {
-      toast.error('Collection name is required', toastConfig);
+      toast.error('Collection name is required');
       return;
     }
 
     createCollection(name.trim(), description.trim());
-    toast.success(`Collection "${name.trim()}" created`, toastConfig);
+    toast.success(`Collection "${name.trim()}" created`);
     
     router.push('/library');
   };

@@ -38,17 +38,15 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
     fetchTrack();
   }, [id, songs, addRecentTrack]);
 
-  const toastConfig = { action: { label: 'OK', onClick: () => {} } };
-
   const handleSaveToggle = () => {
     if (isSaved) {
       removeTrack(id);
       setIsSaved(false);
-      toast.success('Removed from saved songs', toastConfig);
+      toast.success('Removed from saved songs');
     } else if (track) {
       saveTrack(track);
       setIsSaved(true);
-      toast.success('Saved to your songs', toastConfig);
+      toast.success('Saved to your songs');
     }
   };
 
@@ -61,9 +59,9 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
       }
       saveMemory(id, memoryText.trim());
       setIsEditingMemory(false);
-      toast.success('Memory saved successfully', toastConfig);
+      toast.success('Memory saved successfully');
     } else {
-      toast.error('Memory cannot be empty', toastConfig);
+      toast.error('Memory cannot be empty');
     }
   };
 
@@ -75,10 +73,10 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
     const collectionName = collections[collectionId]?.name || 'Collection';
     if (hasTrack) {
       removeTrackFromCollection(collectionId, id);
-      toast.success(`Removed from ${collectionName}`, toastConfig);
+      toast.success(`Removed from ${collectionName}`);
     } else {
       addTrackToCollection(collectionId, id);
-      toast.success(`Added to ${collectionName}`, toastConfig);
+      toast.success(`Added to ${collectionName}`);
     }
   };
 
