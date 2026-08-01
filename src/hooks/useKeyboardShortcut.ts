@@ -18,6 +18,8 @@ export function useKeyboardShortcut(
         return;
       }
 
+      if (!event.key || !key) return;
+      
       const isKeyMatch = event.key.toLowerCase() === key.toLowerCase();
       const isCtrlMatch = ctrlKey ? event.ctrlKey || event.metaKey : true;
       const isMetaMatch = metaKey ? event.metaKey : true;
