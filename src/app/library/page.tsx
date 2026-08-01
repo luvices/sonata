@@ -95,17 +95,42 @@ export default function LibraryPage() {
             {allCollections.length === 0 ? (
               <div className="col-span-full py-20 text-center text-neutral-500">No collections created yet.</div>
             ) : (
-              allCollections.map((collection) => (
-                <Link key={collection.id} href={`/collection/${collection.id}`}>
-                  <div className="group flex flex-col gap-2 rounded-xl border border-[#262626] bg-black p-6 hover:border-neutral-500 transition-all h-full">
-                    <PlayCircle className="h-8 w-8 text-neutral-600 mb-2 group-hover:text-white transition-colors" />
-                    <span className="font-medium text-white text-lg">{collection.name}</span>
-                    <span className="text-sm text-neutral-500">
-                      {collection.trackIds.length} {collection.trackIds.length === 1 ? 'song' : 'songs'}
-                    </span>
-                  </div>
-                </Link>
-              ))
+              allCollections.map((collection) => {
+                const firstTrackId = collection.trackIds[0];
+                const firstSong = firstTrackId ? songs[firstTrackId] : null;
+                const coverImage = firstSong?.album?.cover_medium || firstSong?.album?.cover_xl;
+
+                return (
+                  <Link key={collection.id} href={`/collection/${collection.id}`}>
+                    <div className="group relative flex flex-col rounded-xl border border-[#262626] bg-black p-6 hover:border-neutral-500 transition-all h-full min-h-[160px] overflow-hidden">
+                      {coverImage && (
+                        <>
+                          <div className="absolute inset-0 z-0">
+                            <Image
+                              src={coverImage}
+                              alt="Collection Cover"
+                              fill
+                              className="object-cover opacity-20 filter grayscale blur-[2px] group-hover:opacity-40 group-hover:scale-105 transition-all duration-700"
+                              unoptimized
+                            />
+                          </div>
+                          <div className="absolute inset-0 z-0 bg-gradient-to-t from-black via-black/80 to-black/20" />
+                        </>
+                      )}
+                      
+                      <div className="relative z-10 flex flex-col h-full gap-2">
+                        <PlayCircle className="h-8 w-8 text-neutral-400 mb-4 group-hover:text-white transition-colors drop-shadow-md" />
+                        <div className="mt-auto flex flex-col">
+                          <span className="font-medium text-white text-lg drop-shadow-md">{collection.name}</span>
+                          <span className="text-sm text-neutral-400 drop-shadow-md">
+                            {collection.trackIds.length} {collection.trackIds.length === 1 ? 'song' : 'songs'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })
             )}
           </div>
         )}
