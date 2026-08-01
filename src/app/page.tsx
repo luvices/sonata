@@ -4,7 +4,7 @@ import { useMusicStore } from "@/store/useMusicStore";
 import { SearchPanel } from "@/features/search/SearchPanel";
 import Image from "next/image";
 import Link from "next/link";
-import { History } from "lucide-react";
+import { History, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Home() {
@@ -53,8 +53,9 @@ export default function Home() {
               <History className="h-5 w-5 text-neutral-400" />
               <h2 className="text-lg font-medium tracking-wide text-white">Recent Memories</h2>
             </div>
-            <Link href="/library" className="text-sm text-neutral-500 hover:text-white transition-colors">
-              Library
+            <Link href="/library" className="group flex items-center gap-1.5 text-sm text-neutral-500 hover:text-white transition-colors">
+              <span>Library</span>
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </div>
           {recentMemories.length > 0 ? (
