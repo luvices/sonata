@@ -207,6 +207,7 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
                 </>
               )}
             </div>
+            </div>
             
             {track.preview && (
               <audio controls src={track.preview} className="h-11 w-full max-w-[280px] opacity-80 filter invert contrast-200 mt-2 md:mt-0 md:ml-4">
