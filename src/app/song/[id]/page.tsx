@@ -107,10 +107,10 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
         <ArrowLeft className="h-4 w-4" /> Back
       </Link>
 
-      <div className="flex flex-col md:flex-row gap-12 md:gap-20">
+      <div className="flex flex-col md:flex-row gap-8 md:gap-20">
         {/* Artwork */}
-        <div className="w-full md:w-[400px] shrink-0">
-          <div className="relative aspect-square w-full overflow-hidden bg-[#1a1a1a] shadow-2xl rounded-sm">
+        <div className="w-2/3 max-w-[280px] md:max-w-none md:w-[400px] shrink-0 mx-auto md:mx-0">
+          <div className="relative aspect-square w-full overflow-hidden bg-[#1a1a1a] shadow-xl md:shadow-2xl rounded-md md:rounded-sm">
             {track.album?.cover_xl ? (
               <Image
                 src={track.album.cover_xl}
@@ -132,17 +132,17 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
         </div>
 
         {/* Info */}
-        <div className="flex flex-col flex-1 py-4">
-          <div className="flex flex-col gap-2 mb-8">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-white leading-tight">
+        <div className="flex flex-col flex-1 py-0 md:py-4">
+          <div className="flex flex-col gap-1 md:gap-2 mb-6 md:mb-8 text-center md:text-left">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-white leading-tight">
               {track.title}
             </h1>
-            <h2 className="text-xl md:text-2xl text-neutral-400 font-light">
+            <h2 className="text-lg md:text-2xl text-neutral-400 font-light">
               {track.artist.name} &bull; {track.album.title}
             </h2>
           </div>
 
-          <div className="flex flex-wrap items-center gap-6 mb-12 text-sm text-neutral-400">
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6 mb-8 md:mb-12 text-xs md:text-sm text-neutral-400">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
               {Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}
@@ -155,27 +155,27 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 mb-16 border-b border-[#262626] pb-12 relative">
-            <Button 
-              variant={isSaved ? "secondary" : "default"} 
-              size="lg" 
-              className="w-40 gap-2"
-              onClick={handleSaveToggle}
-            >
-              {isSaved ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
-              {isSaved ? 'Saved' : 'Save Song'}
-            </Button>
-            
-            <div className="relative">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-10 border-b border-[#262626] pb-8 relative w-full">
+            <div className="flex w-full md:w-auto gap-3">
               <Button 
-                variant="outline" 
-                size="lg" 
-                className="gap-2"
-                onClick={() => setShowCollections(!showCollections)}
+                variant={isSaved ? "secondary" : "default"} 
+                className="flex-1 md:w-40 gap-2 h-11"
+                onClick={handleSaveToggle}
               >
-                <Plus className="h-4 w-4" />
-                Add to Collection
+                {isSaved ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
+                {isSaved ? 'Saved' : 'Save Song'}
               </Button>
+              
+              <div className="relative flex-1 md:w-auto">
+                <Button 
+                  variant="outline" 
+                  className="w-full gap-2 h-11"
+                  onClick={() => setShowCollections(!showCollections)}
+                >
+                  <Plus className="h-4 w-4" />
+                  <span className="hidden sm:inline">Add to Collection</span>
+                  <span className="sm:hidden">Collection</span>
+                </Button>
               
               {showCollections && (
                 <>
@@ -209,7 +209,7 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
             </div>
             
             {track.preview && (
-              <audio controls src={track.preview} className="h-12 w-full max-w-[240px] opacity-80 filter invert contrast-200">
+              <audio controls src={track.preview} className="h-11 w-full max-w-[280px] opacity-80 filter invert contrast-200 mt-2 md:mt-0 md:ml-4">
                 Your browser does not support the audio element.
               </audio>
             )}
