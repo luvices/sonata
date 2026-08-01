@@ -110,7 +110,7 @@ export default function LibraryPage() {
                               src={coverImage}
                               alt="Collection Cover"
                               fill
-                              className="object-cover opacity-20 filter grayscale blur-[2px] group-hover:opacity-40 group-hover:scale-105 transition-all duration-700"
+                              className="object-cover opacity-30 filter blur-[2px] group-hover:opacity-50 group-hover:scale-105 transition-all duration-700"
                               unoptimized
                             />
                           </div>
@@ -145,26 +145,32 @@ export default function LibraryPage() {
                 if (!song) return null;
                 return (
                   <Link key={memory.id} href={`/song/${song.id}`}>
-                    <div className="group flex flex-col gap-4 rounded-xl border border-[#262626] p-6 transition-all hover:bg-[#1a1a1a] h-full">
-                      <History className="h-5 w-5 text-neutral-600 mb-2" />
-                      <p className="text-sm font-medium text-neutral-200 leading-relaxed">"{memory.text}"</p>
-                      <div className="flex items-center gap-3 mt-auto pt-4 border-t border-[#262626]">
-                        <div className="relative h-10 w-10 overflow-hidden rounded bg-[#262626] shrink-0">
-                          {song.album?.cover_medium && (
-                            <Image
-                              src={song.album.cover_medium}
-                              alt={song.title}
-                              fill
-                              className="object-cover"
-                              unoptimized
-                            />
-                          )}
+                    <div className="group relative flex overflow-hidden rounded-xl border border-[#262626] bg-[#0a0a0a] hover:border-neutral-500 transition-all h-full min-h-[160px]">
+                      
+                      {/* Fading Background Image */}
+                      {song.album?.cover_medium && (
+                        <div className="absolute inset-y-0 left-0 w-3/4 z-0 pointer-events-none">
+                          <Image
+                            src={song.album.cover_medium}
+                            alt={song.title}
+                            fill
+                            className="object-cover opacity-40 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700"
+                            style={{ 
+                              maskImage: 'linear-gradient(to right, black 20%, transparent 100%)', 
+                              WebkitMaskImage: 'linear-gradient(to right, black 20%, transparent 100%)' 
+                            }}
+                            unoptimized
+                          />
                         </div>
-                        <div className="flex flex-col overflow-hidden">
-                          <span className="truncate text-sm font-medium text-white">{song.title}</span>
-                          <span className="truncate text-xs text-neutral-500">{song.artist.name}</span>
-                        </div>
+                      )}
+                      
+                      {/* Content aligned to right */}
+                      <div className="relative z-10 flex flex-col justify-center flex-1 p-6 pl-12 text-right w-full">
+                        <History className="h-5 w-5 text-neutral-500 mb-3 ml-auto opacity-50 group-hover:opacity-100 transition-opacity" />
+                        <span className="truncate text-base font-semibold text-white mb-2">{song.title}</span>
+                        <p className="text-sm text-neutral-300 leading-relaxed italic line-clamp-3">"{memory.text}"</p>
                       </div>
+
                     </div>
                   </Link>
                 );
