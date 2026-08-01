@@ -1,4 +1,5 @@
 import { DeezerSearchResponse, Track } from '@/types';
+import { decryptPayload } from './crypto';
 
 const API_BASE_URL = 'https://api.deezer.com';
 
@@ -28,7 +29,12 @@ export async function searchTracks(query: string, limit: number = 20): Promise<T
       throw new Error('Failed to fetch from Deezer');
     }
 
-    const data: DeezerSearchResponse = await response.json();
+    const encryptedText = await response.text();
+    const data: DeezerSearchResponse = decryptPayload(encryptedText);
+
+    if (!data || !data.data) {
+      return [];
+    }
 
     return data.data.map(track => ({
       id: track.id.toString(),
@@ -61,7 +67,12 @@ export async function getTrackDetails(id: string): Promise<Track | null> {
       return null;
     }
 
-    const track = await response.json();
+    const encryptedText = await response.text();
+    const track = decryptPayload(encryptedText);
+
+    if (!track || track.error) {
+      return null;
+    }
     
     return {
       id: track.id.toString(),

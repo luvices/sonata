@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { encryptPayload } from '@/lib/crypto';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -16,7 +17,10 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await res.json();
-    return NextResponse.json(data);
+    return new NextResponse(encryptPayload(data), {
+      status: 200,
+      headers: { 'Content-Type': 'text/plain' },
+    });
   } catch (error) {
     console.error('API Track Error:', error);
     return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
