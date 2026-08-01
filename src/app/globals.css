@@ -40,3 +40,15 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #404040;
 }
+
+/* Center toasts on mobile with OK button styles */
+@media (max-width: 768px) {
+  [data-sonner-toaster] {
+    top: 50% !important;
+    bottom: auto !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translate(-50%, -50%) !important;
+    width: 85vw !important;
+  }
+}
