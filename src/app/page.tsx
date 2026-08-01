@@ -4,15 +4,13 @@ import { useMusicStore } from "@/store/useMusicStore";
 import { SearchPanel } from "@/features/search/SearchPanel";
 import Image from "next/image";
 import Link from "next/link";
-import { PlayCircle, Library, History } from "lucide-react";
+import { History } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Home() {
-  const { songs, collections, memories } = useMusicStore();
+  const { songs, memories } = useMusicStore();
   
-  const savedSongs = Object.values(songs).sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0)).slice(0, 10);
-  const recentMemories = Object.values(memories).sort((a, b) => b.updatedAt - a.updatedAt).slice(0, 3);
-  const recentCollections = Object.values(collections).sort((a, b) => b.updatedAt - a.updatedAt).slice(0, 4);
+  const recentMemories = Object.values(memories).sort((a, b) => b.updatedAt - a.updatedAt).slice(0, 5);
 
   return (
     <div className="flex flex-col items-center min-h-[80vh]">
@@ -41,112 +39,35 @@ export default function Home() {
         <SearchPanel />
       </motion.div>
 
-      {/* Content Grid */}
+      {/* Content Stack */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
-        className="w-full grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16"
+        className="w-full max-w-3xl flex flex-col gap-8"
       >
-        
-        {/* Recently Saved Songs */}
-        <section className="flex flex-col gap-6">
-          <div className="flex items-center justify-between border-b border-[#262626] pb-4">
-            <div className="flex items-center gap-3">
-              <Library className="h-5 w-5 text-neutral-400" />
-              <h2 className="text-lg font-medium tracking-wide text-white">Recently Saved</h2>
-            </div>
-            <Link href="/library" className="text-sm text-neutral-500 hover:text-white transition-colors">
-              View All
-            </Link>
-          </div>
-          {savedSongs.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {savedSongs.slice(0, 6).map((song) => (
-                <Link key={song.id} href={`/song/${song.id}`}>
-                  <div className="group flex items-center gap-4 rounded-xl p-3 hover:bg-[#1a1a1a] transition-colors border border-transparent hover:border-[#333]">
-                    <div className="relative h-16 w-16 overflow-hidden rounded-md bg-[#262626]">
-                      {song.album?.cover_medium && (
-                        <Image
-                          src={song.album.cover_medium}
-                          alt={song.title}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          unoptimized
-                        />
-                      )}
-                    </div>
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="truncate font-medium text-white group-hover:text-neutral-200">{song.title}</span>
-                      <span className="truncate text-xs text-neutral-500">
-                        {song.artist.name}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="py-10 text-center text-sm text-neutral-500 border border-dashed border-[#262626] rounded-xl">
-              No songs saved yet. Search above to start your collection.
-            </div>
-          )}
-        </section>
-
-        {/* Collections */}
-        <section className="flex flex-col gap-6">
-          <div className="flex items-center justify-between border-b border-[#262626] pb-4">
-            <div className="flex items-center gap-3">
-              <PlayCircle className="h-5 w-5 text-neutral-400" />
-              <h2 className="text-lg font-medium tracking-wide text-white">Collections</h2>
-            </div>
-            <Link href="/library" className="text-sm text-neutral-500 hover:text-white transition-colors">
-              View All
-            </Link>
-          </div>
-          {recentCollections.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {recentCollections.map((collection) => (
-                <Link key={collection.id} href={`/collection/${collection.id}`}>
-                  <div className="group flex flex-col gap-2 rounded-xl border border-[#262626] bg-[#0a0a0a] p-5 hover:border-neutral-500 transition-colors">
-                    <span className="font-medium text-white">{collection.name}</span>
-                    <span className="text-sm text-neutral-500">
-                      {collection.trackIds.length} {collection.trackIds.length === 1 ? 'song' : 'songs'}
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="py-10 text-center text-sm text-neutral-500 border border-dashed border-[#262626] rounded-xl flex flex-col items-center gap-3">
-              <span>No collections yet.</span>
-              <Link href="/collection/new" className="text-white hover:underline">Create Collection</Link>
-            </div>
-          )}
-        </section>
-
         {/* Recent Memories */}
-        <section className="flex flex-col gap-6 md:col-span-2">
+        <section className="flex flex-col gap-6">
           <div className="flex items-center justify-between border-b border-[#262626] pb-4">
             <div className="flex items-center gap-3">
               <History className="h-5 w-5 text-neutral-400" />
               <h2 className="text-lg font-medium tracking-wide text-white">Recent Memories</h2>
             </div>
             <Link href="/library" className="text-sm text-neutral-500 hover:text-white transition-colors">
-              View All
+              Library
             </Link>
           </div>
           {recentMemories.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex flex-col gap-4">
               {recentMemories.map((memory) => {
                 const song = songs[memory.trackId];
                 if (!song) return null;
                 return (
                   <Link key={memory.id} href={`/song/${song.id}`}>
-                    <div className="group flex flex-col gap-4 rounded-xl border border-[#262626] p-5 transition-colors hover:bg-[#1a1a1a] h-full">
-                      <p className="text-sm font-medium text-neutral-200 leading-relaxed line-clamp-3">"{memory.text}"</p>
-                      <div className="flex items-center gap-3 mt-auto pt-4 border-t border-[#262626]">
-                        <div className="relative h-8 w-8 overflow-hidden rounded bg-[#262626] shrink-0">
+                    <div className="group flex flex-col md:flex-row md:items-center gap-4 rounded-xl border border-[#262626] p-5 transition-colors hover:bg-[#1a1a1a] hover:border-[#404040]">
+                      {/* Song Info */}
+                      <div className="flex items-center gap-4 min-w-[200px] shrink-0">
+                        <div className="relative h-12 w-12 overflow-hidden rounded bg-[#262626] shrink-0">
                           {song.album?.cover_medium && (
                             <Image
                               src={song.album.cover_medium}
@@ -157,10 +78,17 @@ export default function Home() {
                             />
                           )}
                         </div>
-                        <div className="flex flex-col overflow-hidden">
-                          <span className="truncate text-xs font-medium text-white">{song.title}</span>
-                          <span className="truncate text-[10px] text-neutral-500">{song.artist.name}</span>
+                        <div className="flex flex-col overflow-hidden pr-4">
+                          <span className="truncate text-sm font-medium text-white">{song.title}</span>
+                          <span className="truncate text-xs text-neutral-500">{song.artist.name}</span>
                         </div>
+                      </div>
+                      
+                      {/* Memory Text */}
+                      <div className="md:border-l border-[#262626] pt-3 mt-1 md:pt-0 md:mt-0 md:pl-5 md:flex-1">
+                        <p className="text-sm font-medium text-neutral-200 leading-relaxed line-clamp-2">
+                          "{memory.text}"
+                        </p>
                       </div>
                     </div>
                   </Link>
@@ -169,7 +97,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="py-12 text-center text-sm text-neutral-500 border border-dashed border-[#262626] rounded-xl">
-              No memories recorded. Save a song and add a personal note to see it here.
+              No memories recorded. Search and save a song to start your journal.
             </div>
           )}
         </section>
