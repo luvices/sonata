@@ -28,7 +28,10 @@ export default function RootLayout({
         
         {/* Footer */}
         <footer className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 py-8 mt-auto text-center border-t border-[#1a1a1a]">
-          <p className="text-neutral-500 text-sm tracking-wide">
+          <p className="text-neutral-400 text-sm mb-2">
+            All your music and memories are saved locally in your browser. No databases, no tracking.
+          </p>
+          <p className="text-neutral-500 text-xs tracking-wide">
             This project is open source. <a href="https://github.com/luvices/sonata.git" target="_blank" rel="noreferrer" className="text-white hover:underline underline-offset-4 transition-colors">GitHub Repository</a>
           </p>
         </footer>
