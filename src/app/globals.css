@@ -40,16 +40,3 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #404040;
 }
-
-/* Position toasts at the top on mobile */
-@media (max-width: 768px) {
-  [data-sonner-toaster] {
-    top: 1.5rem !important;
-    bottom: auto !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
-    width: 90vw !important;
-    position: fixed !important;
-  }
-}

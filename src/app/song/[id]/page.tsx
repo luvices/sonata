@@ -13,13 +13,13 @@ import { toast } from 'sonner';
 
 export default function SongPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  
+
   const { songs, saveTrack, removeTrack, memories, saveMemory, addRecentTrack, collections, addTrackToCollection, removeTrackFromCollection } = useMusicStore();
   const [track, setTrack] = useState<Track | null>(songs[id] || null);
   const [loading, setLoading] = useState(!songs[id]);
   const [isSaved, setIsSaved] = useState(!!songs[id]);
   const [showCollections, setShowCollections] = useState(false);
-  
+
   const memory = Object.values(memories).find(m => m.trackId === id);
   const [memoryText, setMemoryText] = useState(memory?.text || '');
   const [isEditingMemory, setIsEditingMemory] = useState(!memory);
@@ -129,7 +129,7 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
                 unoptimized
               />
             ) : track.album?.cover_medium ? (
-               <Image
+              <Image
                 src={track.album.cover_medium}
                 alt={track.title}
                 fill
@@ -166,58 +166,58 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
 
           <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-10 border-b border-[#262626] pb-8 relative w-full">
             <div className="flex w-full md:w-auto gap-3">
-              <Button 
-                variant={isSaved ? "secondary" : "default"} 
+              <Button
+                variant={isSaved ? "secondary" : "default"}
                 className="flex-1 md:w-40 gap-2 h-11"
                 onClick={handleSaveToggle}
               >
                 {isSaved ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
                 {isSaved ? 'Saved' : 'Save Song'}
               </Button>
-              
+
               <div className="relative flex-1 md:w-auto">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full gap-2 h-11"
                   onClick={() => setShowCollections(!showCollections)}
                 >
                   <Plus className="h-4 w-4" />
-                  <span className="hidden sm:inline">Add to Collection</span>
+                  <span className="hidden sm:inline">Collection</span>
                   <span className="sm:hidden">Collection</span>
                 </Button>
-              
-              {showCollections && (
-                <>
-                  <div className="fixed inset-0 z-0" onClick={() => setShowCollections(false)} />
-                  <div className="absolute top-full mt-2 right-0 sm:left-0 sm:right-auto w-[240px] sm:w-64 bg-[#0a0a0a] border border-[#262626] rounded-xl shadow-2xl overflow-hidden z-10 p-2 flex flex-col gap-1">
-                    {Object.values(collections).length === 0 ? (
-                      <div className="p-3 text-sm text-neutral-500 text-center">No collections yet</div>
-                    ) : (
-                      Object.values(collections).map(c => {
-                        const hasTrack = c.trackIds.includes(id);
-                        return (
-                          <button 
-                            key={c.id}
-                            onClick={() => toggleCollection(c.id, hasTrack)}
-                            className="flex items-center justify-between p-2 rounded-md hover:bg-[#1a1a1a] transition-colors text-sm text-left"
-                          >
-                            <span className="truncate pr-2">{c.name}</span>
-                            {hasTrack && <Check className="h-4 w-4 text-white shrink-0" />}
-                          </button>
-                        );
-                      })
-                    )}
-                    <Link href="/collection/new" className="mt-2 pt-2 border-t border-[#262626]" onClick={() => setShowCollections(false)}>
-                      <Button variant="ghost" size="sm" className="w-full justify-start text-neutral-400 hover:text-white">
-                        <Plus className="h-4 w-4 mr-2" /> New Collection
-                      </Button>
-                    </Link>
-                  </div>
-                </>
-              )}
+
+                {showCollections && (
+                  <>
+                    <div className="fixed inset-0 z-0" onClick={() => setShowCollections(false)} />
+                    <div className="absolute top-full mt-2 right-0 sm:left-0 sm:right-auto w-[240px] sm:w-64 bg-[#0a0a0a] border border-[#262626] rounded-xl shadow-2xl overflow-hidden z-10 p-2 flex flex-col gap-1">
+                      {Object.values(collections).length === 0 ? (
+                        <div className="p-3 text-sm text-neutral-500 text-center">No collections yet</div>
+                      ) : (
+                        Object.values(collections).map(c => {
+                          const hasTrack = c.trackIds.includes(id);
+                          return (
+                            <button
+                              key={c.id}
+                              onClick={() => toggleCollection(c.id, hasTrack)}
+                              className="flex items-center justify-between p-2 rounded-md hover:bg-[#1a1a1a] transition-colors text-sm text-left"
+                            >
+                              <span className="truncate pr-2">{c.name}</span>
+                              {hasTrack && <Check className="h-4 w-4 text-white shrink-0" />}
+                            </button>
+                          );
+                        })
+                      )}
+                      <Link href="/collection/new" className="mt-2 pt-2 border-t border-[#262626]" onClick={() => setShowCollections(false)}>
+                        <Button variant="ghost" size="sm" className="w-full justify-start text-neutral-400 hover:text-white">
+                          <Plus className="h-4 w-4 mr-2" /> New Collection
+                        </Button>
+                      </Link>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
-            </div>
-            
+
             {track.preview && (
               <audio controls src={track.preview} className="h-11 w-full max-w-[280px] opacity-80 filter invert contrast-200 mt-2 md:mt-0 md:ml-4">
                 Your browser does not support the audio element.
@@ -230,7 +230,7 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
             <h3 className="text-lg font-medium text-white flex items-center gap-3">
               Memory
               {!isEditingMemory && memory && (
-                <button 
+                <button
                   onClick={() => setIsEditingMemory(true)}
                   className="text-neutral-500 hover:text-white transition-colors"
                 >
@@ -238,7 +238,7 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
                 </button>
               )}
             </h3>
-            
+
             {isEditingMemory ? (
               <>
                 <p className="text-sm text-neutral-500 mb-2">
