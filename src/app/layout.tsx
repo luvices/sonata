@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import { CommandPalette } from "@/features/command-palette/CommandPalette";
+import { Toaster } from "sonner";
 
 const font = Open_Sans({
   variable: "--font-sans",
@@ -21,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${font.variable} font-sans antialiased min-h-screen flex flex-col bg-[#0a0a0a] text-neutral-100`}>
+        <Toaster theme="dark" position="bottom-right" toastOptions={{ className: 'border-[#262626] bg-[#0a0a0a] text-white' }} />
         <CommandPalette />
         <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 sm:px-6 py-8 md:py-16">
           {children}

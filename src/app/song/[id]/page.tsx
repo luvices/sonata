@@ -9,6 +9,7 @@ import { ArrowLeft, Clock, Calendar, Bookmark, BookmarkCheck, Plus, Check, Edit2
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Button } from '@/components/ui/Button';
+import { toast } from 'sonner';
 
 export default function SongPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -41,9 +42,11 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
     if (isSaved) {
       removeTrack(id);
       setIsSaved(false);
+      toast.success('Removed from saved songs');
     } else if (track) {
       saveTrack(track);
       setIsSaved(true);
+      toast.success('Saved to your songs');
     }
   };
 
@@ -56,6 +59,9 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
       }
       saveMemory(id, memoryText.trim());
       setIsEditingMemory(false);
+      toast.success('Memory saved successfully');
+    } else {
+      toast.error('Memory cannot be empty');
     }
   };
 
@@ -64,10 +70,13 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
       saveTrack(track);
       setIsSaved(true);
     }
+    const collectionName = collections[collectionId]?.name || 'Collection';
     if (hasTrack) {
       removeTrackFromCollection(collectionId, id);
+      toast.success(`Removed from ${collectionName}`);
     } else {
       addTrackToCollection(collectionId, id);
+      toast.success(`Added to ${collectionName}`);
     }
   };
 

@@ -7,6 +7,7 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { toast } from 'sonner';
 
 export default function NewCollectionPage() {
   const [name, setName] = useState('');
@@ -16,18 +17,15 @@ export default function NewCollectionPage() {
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!name.trim()) {
+      toast.error('Collection name is required');
+      return;
+    }
 
-    // Get current collection IDs before creation
-    const previousIds = Object.keys(collections);
-    
-    // Create collection
     createCollection(name.trim(), description.trim());
+    toast.success(`Collection "${name.trim()}" created`);
     
-    // In a real app we'd wait for Zustand state update or return the ID from the action,
-    // but since we generate ID in action, we can just redirect to home or rely on state.
-    // For simplicity, let's redirect to home
-    router.push('/');
+    router.push('/library');
   };
 
   return (
