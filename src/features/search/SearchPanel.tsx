@@ -36,7 +36,8 @@ export function SearchPanel() {
       if (query.trim().length > 1) {
         setLoading(true);
         const data = await searchTracks(query);
-        setResults(data);
+        // Reverse the results so the most relevant (first from API) is at the bottom, closest to the input
+        setResults(data.reverse());
         setLoading(false);
         setSelectedIndex(-1);
       } else {
@@ -145,7 +146,7 @@ export function SearchPanel() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="absolute left-0 right-0 top-full mt-4 max-h-[60vh] overflow-y-auto rounded-2xl border border-[#262626] bg-[#0a0a0a] p-2 shadow-2xl"
+              className="absolute left-0 right-0 bottom-full mb-4 max-h-[60vh] overflow-y-auto rounded-2xl border border-[#262626] bg-[#0a0a0a] p-2 shadow-2xl"
             >
               {loading ? (
                 <div className="space-y-2 p-2">

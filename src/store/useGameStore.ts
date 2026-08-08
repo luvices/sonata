@@ -7,12 +7,12 @@ export const MAX_GUESSES = 6; // 5 skips + initial = 6 attempts
 export type Guess = Track | 'skipped' | null;
 
 export const PLAYLISTS = [
-  { id: '3155776842', name: 'Global Top Hits', genre: 'Random / Hits', color: 'from-fuchsia-600 to-purple-600' },
-  { id: '1313621735', name: 'Pop Essentials', genre: 'Pop', color: 'from-pink-500 to-rose-500' },
-  { id: '1306931615', name: 'Rock Classics', genre: 'Rock', color: 'from-orange-600 to-red-600' },
-  { id: '1116190041', name: 'Hip Hop Hits', genre: 'Hip Hop', color: 'from-emerald-500 to-teal-600' },
-  { id: '1362529715', name: 'R&B Grooves', genre: 'R&B', color: 'from-blue-600 to-indigo-600' },
-  { id: '1282483245', name: 'Indie & Alt', genre: 'Alternative', color: 'from-yellow-600 to-orange-500' },
+  { id: '13538533363', name: 'Viral TikTok 2025', genre: 'TikTok Hits', color: 'from-[#25F4EE] to-[#FE2C55]' },
+  { id: '5627561402', name: '100% Billie Eilish', genre: 'Billie Eilish', color: 'from-[#00c6ff] to-[#0072ff]' },
+  { id: '8749656362', name: '100% NIKI', genre: 'NIKI', color: 'from-[#fbc2eb] to-[#a6c1ee]' },
+  { id: '5363150822', name: '100% Kendrick Lamar', genre: 'Kendrick Lamar', color: 'from-[#141E30] to-[#243B55]' },
+  { id: '7615950122', name: '100% SZA', genre: 'SZA', color: 'from-[#4facfe] to-[#00f2fe]' },
+  { id: '4373500722', name: '100% Bruno Mars', genre: 'Bruno Mars', color: 'from-[#f83600] to-[#f9d423]' },
 ];
 
 interface GameState {
@@ -30,6 +30,22 @@ interface GameState {
   resetGame: () => void;
   backToMenu: () => void;
 }
+
+// Normalize strings to handle variations in title/artist (e.g., lowercase, remove special characters)
+export const normalizeString = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+export const checkIsCorrect = (guessTrack: Track, currentTrack: Track) => {
+  const isIdMatch = guessTrack.id === currentTrack.id;
+  const guessTitle = normalizeString(guessTrack.title);
+  const currentTitle = normalizeString(currentTrack.title);
+  const guessArtist = normalizeString(guessTrack.artist.name);
+  const currentArtist = normalizeString(currentTrack.artist.name);
+
+  const isTitleMatch = guessTitle.includes(currentTitle) || currentTitle.includes(guessTitle);
+  const isArtistMatch = guessArtist.includes(currentArtist) || currentArtist.includes(guessArtist);
+  
+  return isIdMatch || (isTitleMatch && isArtistMatch);
+};
 
 export const useGameStore = create<GameState>((set, get) => ({
   currentTrack: null,
@@ -53,7 +69,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     const { currentTrack, guesses, currentIntervalIndex } = get();
     if (!currentTrack || get().gameStatus !== 'playing') return;
 
-    const isCorrect = guessTrack.id === currentTrack.id;
+    const isCorrect = checkIsCorrect(guessTrack, currentTrack);
+
     const newGuesses = [...guesses];
     newGuesses[currentIntervalIndex] = guessTrack;
 

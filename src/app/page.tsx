@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useGameStore, INTERVALS, MAX_GUESSES, PLAYLISTS } from "@/store/useGameStore";
+import { useGameStore, INTERVALS, MAX_GUESSES, PLAYLISTS, checkIsCorrect } from "@/store/useGameStore";
 import { getPlaylistTracks } from "@/lib/deezer";
 import { SearchPanel } from "@/features/search/SearchPanel";
 import { AudioPlayer } from "@/components/game/AudioPlayer";
@@ -77,9 +77,9 @@ export default function Home() {
             <button
               key={playlist.id}
               onClick={() => handlePlaylistSelect(playlist.id)}
-              className="group relative flex flex-col items-start justify-end h-40 p-6 rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800 hover:border-neutral-500 transition-all text-left shadow-lg"
+              className="group relative flex flex-col items-start justify-end w-full h-40 p-6 rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800 hover:border-neutral-500 transition-all text-left shadow-lg cursor-pointer"
             >
-              <div className={`absolute inset-0 opacity-20 group-hover:opacity-40 transition-opacity bg-gradient-to-br ${playlist.color}`} />
+              <div className={`absolute inset-0 pointer-events-none opacity-20 group-hover:opacity-40 transition-opacity bg-gradient-to-br ${playlist.color}`} />
               <div className="relative z-10 w-full flex justify-between items-end">
                 <div>
                   <h3 className="text-xl font-bold text-white mb-1 group-hover:scale-105 origin-left transition-transform">{playlist.genre}</h3>
@@ -159,7 +159,7 @@ export default function Home() {
             bgColor = "bg-neutral-800 border-neutral-700";
             content = <span className="text-neutral-500 text-sm font-medium">SKIPPED</span>;
           } else if (guess) {
-            const isCorrect = guess.id === currentTrack.id;
+            const isCorrect = checkIsCorrect(guess, currentTrack);
             bgColor = isCorrect ? "bg-green-900/30 border-green-500/50" : "bg-red-900/30 border-red-500/50";
             content = (
               <div className="flex items-center gap-3 w-full">
