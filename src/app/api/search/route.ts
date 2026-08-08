@@ -11,13 +11,24 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const res = await fetch(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=${limit}`);
+    // Adding order=RANKING ensures the most popular/relevant songs (not audiobooks) come first
+    const res = await fetch(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=${limit}&order=RANKING`);
     
     if (!res.ok) {
       throw new Error(`Deezer API responded with status: ${res.status}`);
     }
 
-    const data = await res.json();
+    let data = await res.json();
+    
+    // Filter out audiobooks / chapters
+    if (data && data.data) {
+      data.data = data.data.filter((track: any) => {
+        const title = track.title.toLowerCase();
+        const artist = track.artist.name.toLowerCase();
+        return !title.includes('chapter ') && !artist.includes('chapter ');
+      });
+    }
+
     return new NextResponse(encryptPayload(data), {
       status: 200,
       headers: { 'Content-Type': 'text/plain' },
