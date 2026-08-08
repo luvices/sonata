@@ -1,28 +1,35 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useGameStore, INTERVALS, MAX_GUESSES } from "@/store/useGameStore";
+import { useGameStore, INTERVALS, MAX_GUESSES, PLAYLISTS } from "@/store/useGameStore";
 import { getPlaylistTracks } from "@/lib/deezer";
-import { Track } from "@/types";
 import { SearchPanel } from "@/features/search/SearchPanel";
 import { AudioPlayer } from "@/components/game/AudioPlayer";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { Loader2 } from "lucide-react";
+import { Loader2, Music, PlayCircle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
-// Top Hits Playlist from Deezer
-const PLAYLIST_ID = "3155776842";
-
 export default function Home() {
-  const { currentTrack, guesses, gameStatus, currentIntervalIndex, startGame, skipTurn, resetGame } = useGameStore();
-  const [loading, setLoading] = useState(true);
+  const { 
+    currentTrack, 
+    guesses, 
+    gameStatus, 
+    currentIntervalIndex, 
+    selectedPlaylistId,
+    selectPlaylist,
+    startGame, 
+    skipTurn, 
+    resetGame,
+    backToMenu
+  } = useGameStore();
+  
+  const [loading, setLoading] = useState(false);
 
-  const fetchRandomTrack = async () => {
+  const fetchRandomTrack = async (playlistId: string) => {
     setLoading(true);
-    const tracks = await getPlaylistTracks(PLAYLIST_ID);
+    const tracks = await getPlaylistTracks(playlistId);
     if (tracks.length > 0) {
-      // Find tracks that actually have a preview
       const validTracks = tracks.filter(t => t.preview);
       if (validTracks.length > 0) {
         const randomIndex = Math.floor(Math.random() * validTracks.length);
@@ -32,24 +39,66 @@ export default function Home() {
     setLoading(false);
   };
 
-  useEffect(() => {
-    if (!currentTrack) {
-      fetchRandomTrack();
-    } else {
-      setLoading(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const handlePlaylistSelect = (id: string) => {
+    selectPlaylist(id);
+    fetchRandomTrack(id);
+  };
 
   const handlePlayAgain = () => {
-    resetGame();
-    fetchRandomTrack();
+    if (selectedPlaylistId) {
+      resetGame();
+      fetchRandomTrack(selectedPlaylistId);
+    }
   };
+
+  if (gameStatus === 'menu') {
+    return (
+      <div className="flex flex-col items-center min-h-[80vh] w-full max-w-4xl mx-auto pb-20">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-12 text-center"
+        >
+          <h1 className="text-4xl md:text-5xl font-light tracking-widest text-white mb-4">
+            SONATA
+          </h1>
+          <p className="text-neutral-400 text-base md:text-lg tracking-wide max-w-md mx-auto">
+            Select a genre to play. All modes feature top hits from famous artists and bands.
+          </p>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full px-4"
+        >
+          {PLAYLISTS.map((playlist, index) => (
+            <button
+              key={playlist.id}
+              onClick={() => handlePlaylistSelect(playlist.id)}
+              className="group relative flex flex-col items-start justify-end h-40 p-6 rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800 hover:border-neutral-500 transition-all text-left shadow-lg"
+            >
+              <div className={`absolute inset-0 opacity-20 group-hover:opacity-40 transition-opacity bg-gradient-to-br ${playlist.color}`} />
+              <div className="relative z-10 w-full flex justify-between items-end">
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-1 group-hover:scale-105 origin-left transition-transform">{playlist.genre}</h3>
+                  <p className="text-sm text-neutral-400 font-medium">{playlist.name}</p>
+                </div>
+                <PlayCircle className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all" />
+              </div>
+            </button>
+          ))}
+        </motion.div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-neutral-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-neutral-500 mb-4" />
+        <p className="text-neutral-500 animate-pulse">Loading famous artists...</p>
       </div>
     );
   }
@@ -57,22 +106,39 @@ export default function Home() {
   if (!currentTrack) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
-        <p className="text-neutral-500">Failed to load game. Please refresh.</p>
+        <p className="text-neutral-500 mb-6">Failed to load game. Please refresh.</p>
+        <Button onClick={backToMenu} variant="outline">Back to Menu</Button>
       </div>
     );
   }
 
   const durationLimitMs = gameStatus === 'playing' 
     ? INTERVALS[currentIntervalIndex] * 1000 
-    : 30000; // Full 30s preview on win/loss
+    : 30000; 
+
+  const activePlaylist = PLAYLISTS.find(p => p.id === selectedPlaylistId);
 
   return (
     <div className="flex flex-col items-center min-h-[80vh] w-full max-w-2xl mx-auto pb-20">
       
+      <div className="w-full flex justify-between items-center mb-8 px-2">
+        <button 
+          onClick={backToMenu}
+          className="flex items-center gap-2 text-sm text-neutral-500 hover:text-white transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" /> Menu
+        </button>
+        {activePlaylist && (
+          <span className="text-xs font-medium px-3 py-1 bg-neutral-900 border border-neutral-800 rounded-full text-neutral-400">
+            Playing: {activePlaylist.genre}
+          </span>
+        )}
+      </div>
+
       {/* Header */}
       <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
         className="mb-8 text-center"
       >
         <h1 className="text-3xl md:text-4xl font-light tracking-widest text-white mb-2">
@@ -143,7 +209,7 @@ export default function Home() {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col items-center gap-8 w-full p-6 md:p-8 rounded-2xl bg-neutral-900/80 border border-neutral-800 backdrop-blur-sm"
+              className="flex flex-col items-center gap-8 w-full p-6 md:p-8 rounded-2xl bg-neutral-900/80 border border-neutral-800 backdrop-blur-sm shadow-2xl"
             >
               <div className="text-center">
                 <h2 className={`text-2xl font-bold mb-2 ${gameStatus === 'won' ? 'text-green-400' : 'text-red-400'}`}>
@@ -166,9 +232,14 @@ export default function Home() {
                 </div>
               </div>
 
-              <Button onClick={handlePlayAgain} size="lg" className="w-full sm:w-auto px-12 font-bold text-base h-14 bg-white text-black hover:bg-neutral-200">
-                Play Next
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mt-4">
+                <Button onClick={backToMenu} variant="outline" size="lg" className="h-14 px-8 font-medium">
+                  Menu
+                </Button>
+                <Button onClick={handlePlayAgain} size="lg" className="h-14 px-12 font-bold text-base bg-white text-black hover:bg-neutral-200">
+                  Play Next
+                </Button>
+              </div>
             </motion.div>
           </AnimatePresence>
         )}
