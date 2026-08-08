@@ -8,9 +8,9 @@ export type Guess = Track | 'skipped' | null;
 
 export const PLAYLISTS = [
   { id: 'CUSTOM_TIKTOK', name: 'Viral TikTok 2025', genre: 'TikTok Hits', color: 'from-[#25F4EE] to-[#FE2C55]' },
+  { id: 'CUSTOM_HIPHOP', name: 'Top Hip Hop Hits', genre: 'Modern Hip Hop', color: 'from-[#141E30] to-[#243B55]' },
   { id: '5627561402', name: '100% Billie Eilish', genre: 'Billie Eilish', color: 'from-[#00c6ff] to-[#0072ff]' },
   { id: '8749656362', name: '100% NIKI', genre: 'NIKI', color: 'from-[#fbc2eb] to-[#a6c1ee]' },
-  { id: '5363150822', name: '100% Kendrick Lamar', genre: 'Kendrick Lamar', color: 'from-[#141E30] to-[#243B55]' },
   { id: '7615950122', name: '100% SZA', genre: 'SZA', color: 'from-[#4facfe] to-[#00f2fe]' },
   { id: '4373500722', name: '100% Bruno Mars', genre: 'Bruno Mars', color: 'from-[#f83600] to-[#f9d423]' },
 ];

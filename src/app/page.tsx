@@ -34,7 +34,7 @@ export default function Home() {
     if (playlistId === 'CUSTOM_TIKTOK') {
       const customIds = [
         3047560351, 2801558062, 2801558052, 3050380851, 3782823042, 2959869831, 
-        3064010361, 2783963122, 3152680421, 3198801881, 70322130, // Replaced Hozier Cover with original Arctic Monkeys
+        3064010361, 2783963122, 3152680421, 3198801881, 70322130,
         2426063, 7764688, 2982137201, 2934056311, 2982137141, 3106586641, 
         3124823321, 3631973792, 3047461891, 3122902751, 903771402, 3471926681, 
         2815968782
@@ -42,6 +42,21 @@ export default function Home() {
       
       const availableIds = customIds.filter(id => !playedTrackIds.includes(id.toString()));
       const idsToUse = availableIds.length > 0 ? availableIds : customIds; // fallback if all played
+      
+      const randomId = idsToUse[Math.floor(Math.random() * idsToUse.length)];
+      const track = await getTrackDetails(randomId.toString());
+      if (track && track.preview) {
+        startGame(track);
+      }
+    } else if (playlistId === 'CUSTOM_HIPHOP') {
+      const hiphopIds = [
+        2783963122, 350171311, 533609232, 536421002, 2386586085, 
+        1591188152, 681009652, 384157591, 142337683, 503169162, 
+        2614584352, 347376721, 601837422, 144949268, 2387373015
+      ];
+      
+      const availableIds = hiphopIds.filter(id => !playedTrackIds.includes(id.toString()));
+      const idsToUse = availableIds.length > 0 ? availableIds : hiphopIds;
       
       const randomId = idsToUse[Math.floor(Math.random() * idsToUse.length)];
       const track = await getTrackDetails(randomId.toString());
