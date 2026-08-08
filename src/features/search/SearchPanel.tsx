@@ -36,8 +36,7 @@ export function SearchPanel() {
       if (query.trim().length > 1) {
         setLoading(true);
         const data = await searchTracks(query);
-        // Reverse the results so the most relevant (first from API) is at the bottom, closest to the input
-        setResults(data.reverse());
+        setResults(data);
         setLoading(false);
         setSelectedIndex(-1);
       } else {
