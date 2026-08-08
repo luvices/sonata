@@ -18,14 +18,15 @@ export async function GET(request: NextRequest) {
       throw new Error(`Deezer API responded with status: ${res.status}`);
     }
 
-    let data = await res.json();
-    
-    // Filter out audiobooks / chapters
+    // Filter out audiobooks, chapters, remixes, sped up versions, covers, etc.
     if (data && data.data) {
+      const bannedWords = ['chapter ', 'remix', 'sped up', 'slowed', 'instrumental', 'karaoke', 'cover', 'live at', '(live)', 'live version'];
+      
       data.data = data.data.filter((track: any) => {
         const title = track.title.toLowerCase();
         const artist = track.artist.name.toLowerCase();
-        return !title.includes('chapter ') && !artist.includes('chapter ');
+        
+        return !bannedWords.some(word => title.includes(word) || artist.includes(word));
       });
     }
 
