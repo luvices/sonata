@@ -93,7 +93,44 @@ export async function getTrackDetails(id: string): Promise<Track | null> {
       }
     };
   } catch (error) {
-    console.error('Error fetching track details:', error);
     return null;
+  }
+}
+
+export async function getPlaylistTracks(id: string): Promise<Track[]> {
+  try {
+    const response = await fetch(`/api/playlist?id=${id}`);
+    
+    if (!response.ok) {
+      return [];
+    }
+
+    const encryptedText = await response.text();
+    const data = decryptPayload(encryptedText);
+
+    if (!data || !data.tracks || !data.tracks.data) {
+      return [];
+    }
+
+    return data.tracks.data.map((track: any) => ({
+      id: track.id.toString(),
+      title: track.title,
+      duration: track.duration,
+      preview: track.preview,
+      artist: {
+        id: track.artist.id.toString(),
+        name: track.artist.name,
+        picture_medium: track.artist.picture_medium,
+      },
+      album: {
+        id: track.album.id.toString(),
+        title: track.album.title,
+        cover_medium: track.album.cover_medium,
+        cover_xl: track.album.cover_xl,
+      }
+    }));
+  } catch (error) {
+    console.error('Error fetching playlist tracks:', error);
+    return [];
   }
 }

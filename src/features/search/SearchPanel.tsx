@@ -5,8 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search as SearchIcon, X } from 'lucide-react';
 import { searchTracks } from '@/lib/deezer';
 import { Track } from '@/types';
-import { useMusicStore } from '@/store/useMusicStore';
-import { useRouter } from 'next/navigation';
+import { useGameStore } from '@/store/useGameStore';
 import Image from 'next/image';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut';
@@ -18,8 +17,8 @@ export function SearchPanel() {
   const [isFocused, setIsFocused] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
-  const { addSearchHistory, saveTrack } = useMusicStore();
+  
+  const { submitGuess, gameStatus } = useGameStore();
 
   useKeyboardShortcut('/', () => {
     inputRef.current?.focus();
@@ -74,9 +73,9 @@ export function SearchPanel() {
   }, [isFocused, results, selectedIndex]);
 
   const handleSelect = (track: Track) => {
-    addSearchHistory(query);
-    saveTrack(track); // Opt to save track immediately on interaction, or just navigate?
-    router.push(`/song/${track.id}`);
+    if (gameStatus === 'playing') {
+      submitGuess(track);
+    }
     setIsFocused(false);
     setQuery('');
   };
