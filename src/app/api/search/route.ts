@@ -17,6 +17,8 @@ export async function GET(request: NextRequest) {
     if (!res.ok) {
       throw new Error(`Deezer API responded with status: ${res.status}`);
     }
+    
+    let data = await res.json();
 
     // Filter out audiobooks, chapters, remixes, sped up versions, covers, etc.
     if (data && data.data) {
