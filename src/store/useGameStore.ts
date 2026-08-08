@@ -7,7 +7,7 @@ export const MAX_GUESSES = 6; // 5 skips + initial = 6 attempts
 export type Guess = Track | 'skipped' | null;
 
 export const PLAYLISTS = [
-  { id: '13538533363', name: 'Viral TikTok 2025', genre: 'TikTok Hits', color: 'from-[#25F4EE] to-[#FE2C55]' },
+  { id: 'CUSTOM_TIKTOK', name: 'Viral TikTok 2025', genre: 'TikTok Hits', color: 'from-[#25F4EE] to-[#FE2C55]' },
   { id: '5627561402', name: '100% Billie Eilish', genre: 'Billie Eilish', color: 'from-[#00c6ff] to-[#0072ff]' },
   { id: '8749656362', name: '100% NIKI', genre: 'NIKI', color: 'from-[#fbc2eb] to-[#a6c1ee]' },
   { id: '5363150822', name: '100% Kendrick Lamar', genre: 'Kendrick Lamar', color: 'from-[#141E30] to-[#243B55]' },
@@ -27,6 +27,7 @@ interface GameState {
   startGame: (track: Track) => void;
   submitGuess: (track: Track) => void;
   skipTurn: () => void;
+  giveUp: () => void;
   resetGame: () => void;
   backToMenu: () => void;
 }
@@ -99,6 +100,12 @@ export const useGameStore = create<GameState>((set, get) => ({
     } else {
       set({ guesses: newGuesses, currentIntervalIndex: nextIndex });
     }
+  },
+
+  giveUp: () => {
+    const { currentTrack } = get();
+    if (!currentTrack || get().gameStatus !== 'playing') return;
+    set({ gameStatus: 'lost' });
   },
 
   resetGame: () => set({

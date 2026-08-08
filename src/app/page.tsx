@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useGameStore, INTERVALS, MAX_GUESSES, PLAYLISTS, checkIsCorrect } from "@/store/useGameStore";
-import { getPlaylistTracks } from "@/lib/deezer";
+import { getPlaylistTracks, getTrackDetails } from "@/lib/deezer";
 import { SearchPanel } from "@/features/search/SearchPanel";
 import { AudioPlayer } from "@/components/game/AudioPlayer";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,6 +20,7 @@ export default function Home() {
     selectPlaylist,
     startGame, 
     skipTurn, 
+    giveUp,
     resetGame,
     backToMenu
   } = useGameStore();
@@ -28,14 +29,31 @@ export default function Home() {
 
   const fetchRandomTrack = async (playlistId: string) => {
     setLoading(true);
-    const tracks = await getPlaylistTracks(playlistId);
-    if (tracks.length > 0) {
-      const validTracks = tracks.filter(t => t.preview);
-      if (validTracks.length > 0) {
-        const randomIndex = Math.floor(Math.random() * validTracks.length);
-        startGame(validTracks[randomIndex]);
+    
+    if (playlistId === 'CUSTOM_TIKTOK') {
+      const customIds = [
+        3047560351, 2801558062, 2801558052, 3050380851, 3782823042, 2959869831, 
+        3064010361, 2783963122, 3152680421, 3194407481, 3198801881, 111774706, 
+        2426063, 7764688, 2982137201, 2934056311, 2982137141, 3106586641, 
+        3124823321, 3631973792, 3047461891, 3122902751, 903771402, 3471926681, 
+        2815968782
+      ];
+      const randomId = customIds[Math.floor(Math.random() * customIds.length)];
+      const track = await getTrackDetails(randomId.toString());
+      if (track && track.preview) {
+        startGame(track);
+      }
+    } else {
+      const tracks = await getPlaylistTracks(playlistId);
+      if (tracks.length > 0) {
+        const validTracks = tracks.filter(t => t.preview);
+        if (validTracks.length > 0) {
+          const randomIndex = Math.floor(Math.random() * validTracks.length);
+          startGame(validTracks[randomIndex]);
+        }
       }
     }
+    
     setLoading(false);
   };
 
@@ -195,13 +213,22 @@ export default function Home() {
               <span className="text-xs text-neutral-500 font-medium">
                 Attempt {currentIntervalIndex + 1} of {MAX_GUESSES}
               </span>
-              <Button 
-                variant="outline" 
-                onClick={skipTurn}
-                className="text-neutral-400 hover:text-white"
-              >
-                Skip (+{currentIntervalIndex + 1 < MAX_GUESSES ? INTERVALS[currentIntervalIndex + 1] - INTERVALS[currentIntervalIndex] : 0}s)
-              </Button>
+              <div className="flex items-center gap-3">
+                <Button 
+                  variant="outline" 
+                  onClick={giveUp}
+                  className="text-red-400 hover:text-red-300 border-red-900/30 hover:border-red-800/50 hover:bg-red-950/20"
+                >
+                  Give Up
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={skipTurn}
+                  className="text-neutral-400 hover:text-white"
+                >
+                  Hear More (+{currentIntervalIndex + 1 < MAX_GUESSES ? INTERVALS[currentIntervalIndex + 1] - INTERVALS[currentIntervalIndex] : 0}s)
+                </Button>
+              </div>
             </div>
           </div>
         ) : (
