@@ -21,6 +21,7 @@ interface GameState {
   gameStatus: 'menu' | 'playing' | 'won' | 'lost';
   currentIntervalIndex: number;
   selectedPlaylistId: string | null;
+  playedTrackIds: string[];
   
   // Actions
   selectPlaylist: (id: string) => void;
@@ -54,17 +55,25 @@ export const useGameStore = create<GameState>((set, get) => ({
   gameStatus: 'menu',
   currentIntervalIndex: 0,
   selectedPlaylistId: null,
+  playedTrackIds: [],
 
   selectPlaylist: (id: string) => set({
     selectedPlaylistId: id,
   }),
 
-  startGame: (track: Track) => set({
-    currentTrack: track,
-    guesses: Array(MAX_GUESSES).fill(null),
-    gameStatus: 'playing',
-    currentIntervalIndex: 0,
-  }),
+  startGame: (track: Track) => {
+    const { playedTrackIds } = get();
+    // Only keep the last 100 played tracks to avoid memory issues and eventually allow repeats
+    const updatedPlayedTracks = [...playedTrackIds, track.id].slice(-100);
+    
+    set({
+      currentTrack: track,
+      guesses: Array(MAX_GUESSES).fill(null),
+      gameStatus: 'playing',
+      currentIntervalIndex: 0,
+      playedTrackIds: updatedPlayedTracks,
+    });
+  },
 
   submitGuess: (guessTrack: Track) => {
     const { currentTrack, guesses, currentIntervalIndex } = get();

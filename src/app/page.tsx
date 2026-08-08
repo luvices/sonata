@@ -17,6 +17,7 @@ export default function Home() {
     gameStatus, 
     currentIntervalIndex, 
     selectedPlaylistId,
+    playedTrackIds,
     selectPlaylist,
     startGame, 
     skipTurn, 
@@ -38,7 +39,11 @@ export default function Home() {
         3124823321, 3631973792, 3047461891, 3122902751, 903771402, 3471926681, 
         2815968782
       ];
-      const randomId = customIds[Math.floor(Math.random() * customIds.length)];
+      
+      const availableIds = customIds.filter(id => !playedTrackIds.includes(id.toString()));
+      const idsToUse = availableIds.length > 0 ? availableIds : customIds; // fallback if all played
+      
+      const randomId = idsToUse[Math.floor(Math.random() * idsToUse.length)];
       const track = await getTrackDetails(randomId.toString());
       if (track && track.preview) {
         startGame(track);
@@ -46,10 +51,12 @@ export default function Home() {
     } else {
       const tracks = await getPlaylistTracks(playlistId);
       if (tracks.length > 0) {
-        const validTracks = tracks.filter(t => t.preview);
-        if (validTracks.length > 0) {
-          const randomIndex = Math.floor(Math.random() * validTracks.length);
-          startGame(validTracks[randomIndex]);
+        const availableTracks = tracks.filter(t => t.preview && !playedTrackIds.includes(t.id));
+        const tracksToUse = availableTracks.length > 0 ? availableTracks : tracks.filter(t => t.preview);
+        
+        if (tracksToUse.length > 0) {
+          const randomIndex = Math.floor(Math.random() * tracksToUse.length);
+          startGame(tracksToUse[randomIndex]);
         }
       }
     }
